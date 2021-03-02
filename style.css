@@ -1,0 +1,30 @@
+/* Always set the map height explicitly to define the size of the div
+* element that contains the map. */
+#map {
+    height: 100%;
+    margin-right:25%;
+    padding:1px 16px;
+}
+
+#info-wrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 25%;
+    border: 3px solid #73AD21;
+    height: 100%;
+    padding: 10px;
+    text-align: center;
+}
+
+#restaurant-details {
+    color: #f1f1f1;
+}
+/* Optional: Makes the sample page fill the window. */
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+}
