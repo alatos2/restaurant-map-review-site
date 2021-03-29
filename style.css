@@ -19,7 +19,7 @@
     /* overflow-y: scroll; */
 }
 
-#restaurant-details {
+.restaurant-list {
     /* color: #f1f1f1; */
     /* overflow-y: scroll; */
     position: fixed;
@@ -35,11 +35,18 @@
     color: wheat;
 }
 
+/* , #restaurant-sort1to3-details, #restaurant-sort4to5-details */
+
+.hide-controls {
+    visibility: hidden;
+    display: none;
+}
+
 .restaurantContent {
     /* width: 250px; */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     padding: 15px;
-    margin: 10px;
+    margin: 5px;
     color: wheat;
   }
 
@@ -51,7 +58,7 @@ body {
     padding: 0;
     background-color: black;
     overflow-y: hidden;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 header {
@@ -70,4 +77,8 @@ h2 {
 
 li {
     list-style: none;
+}
+
+#selectRate {
+    padding: 10px;
 }
