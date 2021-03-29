@@ -21,18 +21,21 @@
     </div>
     <div id="info-wrapper">
       <div>
-        <form>
-          <select class="form-select" aria-label="Default select example">
-            <option selected>Sort By Ratings</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-            <option value="4">Four</option>
-            <option value="5">Five</option>
+        <!-- <form> -->
+          <select id="selectRate">
+            <option selected>=== Sort By Ratings ===</option>
+            <!-- <option value="1">1 star</option> -->
+            <option value="all">All</option>
+            <option value="3">1 - 3 stars</option>
+            <option value="4">4 - 5 stars</option>
+            <!-- <option value="5">5 stars</option> -->
           </select>
-        </form>
+          <button id="rateBtn" class="btn btn-light">Sort</button>
+        <!-- </form> -->
       </div>
         <div id="restaurant-details"></div>
+        <div id="restaurant-sort1to3-details"></div>
+        <div id="restaurant-sort4to5-details"></div>
     </div>
 
     <!-- successful modal pop up -->
