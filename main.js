@@ -70,12 +70,13 @@ class Restaurant {
               map: map,
               position: place.geometry.location,
               icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: 'blue',
+                // path: google.maps.SymbolPath.CIRCLE,
+                path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+                fillColor: 'green',
                 fillOpacity: 0.3,
-                stroke: 'blue',
+                stroke: 'green',
                 strokeWeight: 1,
-                scale: 20
+                scale: 10
               }
             });
             google.maps.event.addListener(marker, 'click', function() {
@@ -92,7 +93,6 @@ class Restaurant {
             li.innerHTML = listRestaurant(getPhotos(place), place.name, place.vicinity, place, place.reviews[0].text);
 
             restaurants.appendChild(li);
-
           }
           
         });
@@ -116,7 +116,7 @@ class Restaurant {
             restaurants_sort2.setAttribute('class', 'hide-controls');
             
             restaurants_sort1.setAttribute('class', 'restaurant-list');
-            sortedLi.innerHTML = listRestaurantSort(getPhotos(rating1to3[0]), rating1to3[0].name, rating1to3[0].vicinity, rating1to3[0]);
+            sortedLi.innerHTML = listRestaurantSort(rating1to3[0].vicinity, getPhotos(rating1to3[0]), rating1to3[0].name, rating1to3[0]);
             restaurants_sort1.appendChild(sortedLi);
           }else if (getRate.value >= 4 && place.rating >= 4) {
             rating4to5.push(place);
@@ -124,7 +124,7 @@ class Restaurant {
             restaurants_sort1.setAttribute('class', 'hide-controls');
             
             restaurants_sort2.setAttribute('class', 'restaurant-list');
-            sortedLi.innerHTML = listRestaurantSort(getPhotos(rating4to5[0]), rating4to5[0].name, rating4to5[0].vicinity, rating4to5[0]);
+            sortedLi.innerHTML = listRestaurantSort(rating4to5[0].vicinity, getPhotos(rating4to5[0]), rating4to5[0].name, rating4to5[0]);
             restaurants_sort2.appendChild(sortedLi);
           } else if (getRate.value == 'all') {
             window.location.reload();
@@ -148,6 +148,7 @@ class Restaurant {
                 <option value="4">4</option>
                 <option value="5">5</option>
             </select>
+            <input type="text" id="res-review" class="form-control form-control-sm mt-2" placeholder="Restaurant Review" required/>
             <button id="add-restaurant" class="btn btn-warning btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#successModal">Add New Restaurant</button>
             <label id="error-msg" style="color: red"></label>`;
     
@@ -164,30 +165,27 @@ class Restaurant {
                 name: restaurantName.value,
                 vicinity: restaurantAdd.value,
                 rating: rating.value,
-                // position: position,
-                // geometry: {location: position},
-                icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png',
-                reviews: '',
-                photos: '',
-    
+                icon: 'https://maps.gstatic.com/mapfiles/place_api/icons/restaurant-71.png'
             };
             btn.enabled = true;
             btn.addEventListener('click', function() {
-                // console.log(restaurantName.value, restaurantAdd.value, rating.value);
-
                 let restaurants = document.getElementById('restaurant-details');
-                let restaurants_sort1 = document.getElementById('restaurant-sort1to3-details');
-                let restaurants_sort2 = document.getElementById('restaurant-sort4to5-details');
+                let restaurants_review = document.getElementById('res-review');
+                let restaurants_rating = document.getElementById('res-rating');
                 let li = document.createElement('li');
                 li.innerHTML = `
-                <div class="restaurantContent">
-                    <p><img src='${place.icon}' class='restaurant-img' /></p>
-                    <p><b>${restaurantName.value}</b></p>
-                    <p>📧 <small>${restaurantAdd.value}</small></p>
-                    <div style="color:#eb853b;">${starRating(place)}</div>
-                    <a href='/'>See Review</a>
-                    <ul id="comments"></ul>
-                `;
+                <div class="row">
+                  <div class="col-sm">
+                    <img src='${place.icon}' class="rounded float-start" width="150" height="100" />
+                  </div>
+                  <div class="col-sm">
+                    <div class="row"><b style="color:white">${restaurantName.value}</b></div>
+                    <div style="color:#eb853b; padding-left: 8px" class="row">${starRating2(restaurants_rating.value)}</div>
+                    <div class="row"><a class="link-success" href='#' id="review-link">Add Review</a></div>
+                  </div>
+                  <div style="color: white; padding-left: 15px; padding-top: 5px" class="row"><small><b>Reviews: </b>${restaurants_review.value}</small></div>
+                </div>
+              <hr>`;
                 restaurants.appendChild(li);
                 infoWindowNew.close(map, marker);
             })
@@ -212,7 +210,7 @@ function listRestaurantMarker(getPhotos, getName, getVicinity, getRating, getRev
     <div class="accordion" id="accordionFlushExample">
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingOne">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+        <button id="accordion-btn" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
           See Reviews
         </button>
       </h2>
@@ -221,7 +219,6 @@ function listRestaurantMarker(getPhotos, getName, getVicinity, getRating, getRev
       </div>
     </div>
     </div>
-    <a href='/'>Add Review</a>
     <hr>`;
 }
 
@@ -234,14 +231,15 @@ function listRestaurant(getPhotos, getName, getVicinity, getRating, getReviews) 
       <div class="col-sm">
         <div class="row"><b style="color:white">${getName}</b></div>
         <div style="color:#eb853b; padding-left: 8px" class="row">${getRating ? starRating(getRating) : '&#10025;&#10025;&#10025;&#10025;&#10025;'}</div>
-        <div class="row"><a class="link-success" href='#' id="review-link">Add Review</a></div>
+        <div class="row"><a class="link-success" href='#' onclick="addReview()">Add Review</a></div>
       </div>
-      <div style="color: white; padding-left: 15px; padding-top: 5px" class="row"><small><b>Reviews:</b> ${getReviews}</small></div>
+      <small style="color: white; padding-left: 25px; padding-top: 5px" class="small-reviews row">Reviews: ${getReviews}</small>
     </div>
   <hr>`;
 }
 
-function listRestaurantSort(getPhotos, getName, getVicinity, getRating, getReviews) {
+
+function listRestaurantSort(getVicinity, getPhotos, getName, getRating) {
   return `
     <div class="row">
       <div class="col-sm">
@@ -250,8 +248,8 @@ function listRestaurantSort(getPhotos, getName, getVicinity, getRating, getRevie
       <div class="col-sm">
         <div class="row"><b style="color:white">${getName}</b></div>
         <div style="color:#eb853b; padding-left: 8px" class="row">${getRating ? starRating(getRating) : '&#10025;&#10025;&#10025;&#10025;&#10025;'}</div>
-        <div class="row"><a class="link-success" href='#' id="review-link">Add Review</a></div>
       </div>
+      <div style="color: white; padding-left: 15px; padding-top: 5px" class="row"><small><b>Address: </b>${getVicinity}</small></div>
     </div>
   <hr>`;
 }
@@ -271,22 +269,38 @@ function getPhotos(place) {
 
 function starRating(place) {
     let rating = [];
-  //   if (place.rating) {
-        for (let i = 0; i < 5; i++) {
-            if (place.rating < (i + 0.5)) {
-                rating.push('&#10025;');
-            } else {
-                rating.push('&#10029;');
-            }
+    for (let i = 0; i < 5; i++) {
+        if (place.rating < (i + 0.5)) {
+            rating.push('&#10025;');
+        } else {
+            rating.push('&#10029;');
         }
-        return rating.join(' ');
-    //}
+    }
+    return rating.join(' ');
 }
 
-function getReview(reviews) {
-  for(let i = 0; i < 5; i++) {
-    console.log(reviews)
+function starRating2(val) {
+  let rating = [];
+  for (let i = 0; i < 5; i++) {
+      if (val < (i + 0.5)) {
+          rating.push('&#10025;');
+      } else {
+          rating.push('&#10029;');
+      }
   }
+  return rating.join(' ');
+}
+
+function addReview() {
+  const ans = prompt('Add a review');
+
+  if (ans == '' || ans == null) return;
+
+  if (this.event.target) {
+      const getReviews = this.event.target.parentNode.parentNode.nextElementSibling;
+      getReviews.innerHTML += `<li>🔘 ${ans}</li>`;
+      console.log(this.event.target.parentNode.parentNode.nextElementSibling)
+    }
 }
 
 const restaurant = new Restaurant();
