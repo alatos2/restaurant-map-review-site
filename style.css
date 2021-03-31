@@ -82,3 +82,8 @@ li {
 #selectRate {
     padding: 10px;
 }
+
+#accordion-btn {
+    color: white;
+    border: white solid 1px;
+}
