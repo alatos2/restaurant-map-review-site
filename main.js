@@ -1,4 +1,29 @@
-// let map, infoWindow, infoWindowNew, infoRestaurantWindow, marker, places, service, restaurantIsNew = false;
+// reads restaurant data from the json files
+fetch('data.json')
+.then(responses => responses.json())
+.then(data => {
+    let restaurants = document.getElementById('restaurant-details');
+    restaurants.setAttribute('class', 'restaurant-list');
+    let li = document.createElement('li');
+    li.innerHTML = '';
+    for (let i = 0; i < data.length ; i++) {
+        li.innerHTML += `
+        <div class="row">
+          <div class="col-sm">
+            <img src='${data[0].icon}' class="rounded float-start" width="150" height="100" />
+          </div>
+          <div class="col-sm">
+            <div class="row"><b style="color:white">${data[i].restaurantName}</b></div>
+            <div style="color:#eb853b; padding-left: 8px" class="row">${starRating2(data[i].ratings)}</div>
+            <div class="row"><a class="link-success" href='#' onclick="addReview()">Add Review</a></div>
+          </div>
+          <small style="color: white; padding-left: 25px; padding-top: 5px" class="small-reviews row">Reviews:${data[i].reviews[0].text}</small>
+        </div>
+      <hr>`;
+    }
+
+    restaurants.appendChild(li);
+})
 
 function initMap(lat=-34.397, long=150.644) {
     const uluru = { lat: lat, lng: long };
@@ -19,11 +44,13 @@ function initMap(lat=-34.397, long=150.644) {
 
           infoWindow.setPosition(pos);
           infoWindow.setContent("Here is your location 😎.");
-          // infoWindow.open(map);
+          infoWindow.open(map);
           map.setCenter(pos);
 
           
-          marker = new google.maps.Marker({ position: pos, draggable: false })
+          marker = new google.maps.Marker({
+            position: pos,
+            draggable: false })
 
           marker.setAnimation(google.maps.Animation.BOUNCE);
           setTimeout(function () {marker.setAnimation(null)}, 4000);
@@ -34,14 +61,23 @@ function initMap(lat=-34.397, long=150.644) {
           service = new google.maps.places.PlacesService(map);
           service.nearbySearch(request, callback);
 
-          // adds new restaurant and marker
-
+          // right click on the map to create a marker
           map.addListener('rightclick', function(e) {
             restaurantIsNew = true;
                 let latlng = new google.maps.LatLng(e.latLng.lat(), e.latLng.lng());
                 let marker = new google.maps.Marker({
+                    icon: {
+                      // path: google.maps.SymbolPath.CIRCLE,
+                      path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+                      fillColor: 'green',
+                      fillOpacity: 0.3,
+                      stroke: 'green',
+                      strokeWeight: 1,
+                      scale: 10
+                    },
                     position: latlng
                 });
+                // click on the created marker to add a restaurant
                 google.maps.event.addListener(marker, 'click', restaurant.AddRestaurantInfoWindow);
                 marker.setMap(map);
           })
@@ -53,7 +89,9 @@ function initMap(lat=-34.397, long=150.644) {
     }
 }
 
+// Restaurant class
 class Restaurant {
+  // creates marker of every available restaurant within the specified radius
     CreateMarker(place) {
         if (!place.geometry || !place.geometry.location) return;
       
@@ -79,6 +117,7 @@ class Restaurant {
                 scale: 10
               }
             });
+            // display restaurant details when marker is clicked
             google.maps.event.addListener(marker, 'click', function() {
               let div = document.createElement('div');
               div.style.width = '300px';
@@ -87,6 +126,7 @@ class Restaurant {
               infowindow11.setContent(div);
               infowindow11.open(map, this);
             });
+            // list restaurants on the right handside
             let restaurants = document.getElementById('restaurant-details');
             restaurants.setAttribute('class', 'restaurant-list');
             let li = document.createElement('li');
@@ -107,7 +147,9 @@ class Restaurant {
         let restaurants_sort1 = document.getElementById('restaurant-sort1to3-details');
         let restaurants_sort2 = document.getElementById('restaurant-sort4to5-details');
         let sortedLi = document.createElement('li');
+        sortedLi.innerHTML = '';
 
+        // sorts restaurant based on ratings
         btn.addEventListener('click', () => {
           rating1to3 = []; rating4to5 = [];
           if (getRate.value <= 3 && place.rating <= 3) {
@@ -116,7 +158,7 @@ class Restaurant {
             restaurants_sort2.setAttribute('class', 'hide-controls');
             
             restaurants_sort1.setAttribute('class', 'restaurant-list');
-            sortedLi.innerHTML = listRestaurantSort(rating1to3[0].vicinity, getPhotos(rating1to3[0]), rating1to3[0].name, rating1to3[0]);
+            sortedLi.innerHTML += listRestaurantSort(rating1to3[0].vicinity, getPhotos(rating1to3[0]), rating1to3[0].name, rating1to3[0]);
             restaurants_sort1.appendChild(sortedLi);
           }else if (getRate.value >= 4 && place.rating >= 4) {
             rating4to5.push(place);
@@ -124,7 +166,7 @@ class Restaurant {
             restaurants_sort1.setAttribute('class', 'hide-controls');
             
             restaurants_sort2.setAttribute('class', 'restaurant-list');
-            sortedLi.innerHTML = listRestaurantSort(rating4to5[0].vicinity, getPhotos(rating4to5[0]), rating4to5[0].name, rating4to5[0]);
+            sortedLi.innerHTML += listRestaurantSort(rating4to5[0].vicinity, getPhotos(rating4to5[0]), rating4to5[0].name, rating4to5[0]);
             restaurants_sort2.appendChild(sortedLi);
           } else if (getRate.value == 'all') {
             window.location.reload();
@@ -132,6 +174,7 @@ class Restaurant {
         })
     }
 
+    // Adds new restaurant to list
     AddRestaurantInfoWindow() {
     
         let node = document.createElement('div');
@@ -181,9 +224,9 @@ class Restaurant {
                   <div class="col-sm">
                     <div class="row"><b style="color:white">${restaurantName.value}</b></div>
                     <div style="color:#eb853b; padding-left: 8px" class="row">${starRating2(restaurants_rating.value)}</div>
-                    <div class="row"><a class="link-success" href='#' id="review-link">Add Review</a></div>
+                    <div class="row"><a class="link-success" href='#' onclick="addReview()">Add Review</a></div>
                   </div>
-                  <div style="color: white; padding-left: 15px; padding-top: 5px" class="row"><small><b>Reviews: </b>${restaurants_review.value}</small></div>
+                  <small style="color: white; padding-left: 25px; padding-top: 5px" class="small-reviews row">Reviews:${restaurants_review.value}</small>
                 </div>
               <hr>`;
                 restaurants.appendChild(li);
@@ -201,6 +244,7 @@ function callback(results, status) {
     }
 }
 
+// display restaurant when a marker is clicked
 function listRestaurantMarker(getPhotos, getName, getVicinity, getRating, getReviews) {
     return `<div class="restaurantContent" style="width: 300px">
     <p><img src='${getPhotos}' class='restaurant-img' /></p>
@@ -222,6 +266,7 @@ function listRestaurantMarker(getPhotos, getName, getVicinity, getRating, getRev
     <hr>`;
 }
 
+// displays all restaurant without sorting
 function listRestaurant(getPhotos, getName, getVicinity, getRating, getReviews) {
   return `
     <div class="row">
@@ -238,7 +283,7 @@ function listRestaurant(getPhotos, getName, getVicinity, getRating, getReviews) 
   <hr>`;
 }
 
-
+// displays restaurant based on sorting
 function listRestaurantSort(getVicinity, getPhotos, getName, getRating) {
   return `
     <div class="row">
@@ -254,6 +299,7 @@ function listRestaurantSort(getVicinity, getPhotos, getName, getRating) {
   <hr>`;
 }
 
+// Gets the photo or icon of an existing restaurant
 function getPhotos(place) {
     let photo;
     if (place.photos) {
@@ -267,6 +313,7 @@ function getPhotos(place) {
     return photo;
 }
 
+// Addition of rating
 function starRating(place) {
     let rating = [];
     for (let i = 0; i < 5; i++) {
@@ -279,6 +326,7 @@ function starRating(place) {
     return rating.join(' ');
 }
 
+// Addition of rating for new restaurant added
 function starRating2(val) {
   let rating = [];
   for (let i = 0; i < 5; i++) {
@@ -291,6 +339,7 @@ function starRating2(val) {
   return rating.join(' ');
 }
 
+// Addition of review
 function addReview() {
   const ans = prompt('Add a review');
 
@@ -299,8 +348,8 @@ function addReview() {
   if (this.event.target) {
       const getReviews = this.event.target.parentNode.parentNode.nextElementSibling;
       getReviews.innerHTML += `<li>🔘 ${ans}</li>`;
-      console.log(this.event.target.parentNode.parentNode.nextElementSibling)
     }
 }
+
 
 const restaurant = new Restaurant();
