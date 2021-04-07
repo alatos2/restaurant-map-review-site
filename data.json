@@ -2,32 +2,46 @@
     {
        "restaurantName":"Bronco",
        "address":"39 Rue des Petites Écuries, 75010 Paris",
+       "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
        "lat":48.8737815,
        "long":2.3501649,
-       "ratings":[
+       "ratings": 4.5,
+       "reviews":[
           {
-             "stars":4,
-             "comment":"Great! But not many veggie options."
-          },
-          {
-             "stars":5,
-             "comment":"My favorite restaurant!"
+             "text":"Great! But not many veggie options."
           }
        ]
     },
     {
        "restaurantName":"Babalou",
        "address":"4 Rue Lamarck, 75018 Paris",
+       "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
        "lat":48.8865035,
        "long":2.3442197,
-       "ratings":[
+       "ratings": 4,
+       "reviews":[
           {
-             "stars":5,
-             "comment":"Tiny pizzeria next to Sacre Coeur!"
-          },
+             "text":"Tiny pizzeria next to Sacre Coeur!"
+          }
+       ]
+    },
+    {
+       "restaurantName":"Avenda",
+       "address":"Eden Avenue by Bells Secondary School, Ota, Otta",
+       "icon": "https://maps.gstatic.com/mapfiles/place_api/icons/v1/png_71/lodging-71.png",
+       "lat":6.6838027,
+       "long":3.1553893,
+       "ratings": 4.2,
+       "reviews" : [
           {
-             "stars":3,
-             "comment":"Meh, it was fine."
+             "author_name" : "Gbenga Periola",
+             "author_url" : "https://www.google.com/maps/contrib/102272098066117609889/reviews",
+             "language" : "en",
+             "profile_photo_url" : "https://lh3.googleusercontent.com/a-/AOh14GjwVDt76ihnBbuljPts-mRK6SSV6KMgGVSo_bxGeg=s128-c0x00000000-cc-rp-mo-ba3",
+             "rating" : 4,
+             "relative_time_description" : "a month ago",
+             "text" : "Beautiful environment\nA bit pricey for otta environment though",
+             "time" : 1614338085
           }
        ]
     }
